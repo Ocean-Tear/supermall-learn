@@ -11,8 +11,8 @@ const Profile = () => import('@/views/profile/Profile.vue');
 
 const routes =[
   {
-    path : '/',
-    rediect : '/home'
+    path : '',
+    redirect : '/home'
   },
   {
     path : '/home',
