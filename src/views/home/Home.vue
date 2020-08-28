@@ -7,18 +7,21 @@
     </NavBar>
     <!-- 轮播图 -->
     <Swipe :banners="banners"></Swipe>
+    <RecommendView :recommends="recommends"></RecommendView>
   </div>
 </template>
 <script>
 import NavBar from 'components/common/navbar/NavBar';
 import {getHomeMultidate} from '@/network/home.js';
 import Swipe from 'views/home/childComps/Swipe';
+import RecommendView from 'views/home/childComps/RecommendView';
 
   export default {
     name : 'home',
     components: {
       NavBar,
-      Swipe
+      Swipe,
+      RecommendView
     },
     data() {
       return {

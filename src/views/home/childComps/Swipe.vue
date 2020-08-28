@@ -12,7 +12,12 @@
   export default {
     name : 'swiper',
     props: {
-      banners : Array
+      banners : {
+        type: Array,
+        default() {
+          return []
+        }
+      }
     },
   }
 </script>
