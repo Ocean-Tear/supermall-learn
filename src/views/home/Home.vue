@@ -1,83 +1,42 @@
 <template>
   <div id="home">
+    <!-- 导航栏 -->
     <NavBar class="home-nav">
       <template v-slot:center>
         <div>购物街</div>
       </template>
     </NavBar>
-    <!-- 轮播图 -->
-    <Swipe :banners="banners"></Swipe>
-    <RecommendView :recommends="recommends"></RecommendView>
-    <FeatureView></FeatureView>
-    <TapControl class="tab-control" :titles="titles" @tabClick="tabClick"></TapControl>
-    <GoodList :goods="showGoods"></GoodList>
-    <ul>
-      <li>1列表</li>
-      <li>2列表</li>
-      <li>3列表</li>
-      <li>4列表</li>
-      <li>5列表</li>
-      <li>6列表</li>
-      <li>7列表</li>
-      <li>8列表</li>
-      <li>9列表</li>
-      <li>10列表</li>
-      <li>11列表</li>
-      <li>12列表</li>
-      <li>13列表</li>
-      <li>14列表</li>
-      <li>15列表</li>
-      <li>16列表</li>
-      <li>17列表</li>
-      <li>18列表</li>
-      <li>19列表</li>
-      <li>20列表</li>
-      <li>21列表</li>
-      <li>22列表</li>
-      <li>23列表</li>
-      <li>24列表</li>
-      <li>25列表</li>
-      <li>26列表</li>
-      <li>27列表</li>
-      <li>28列表</li>
-      <li>29列表</li>
-      <li>30列表</li>
-      <li>31列表</li>
-      <li>32列表</li>
-      <li>33列表</li>
-      <li>34列表</li>
-      <li>35列表</li>
-      <li>36列表</li>
-      <li>37列表</li>
-      <li>38列表</li>
-      <li>39列表</li>
-      <li>40列表</li>
-      <li>41列表</li>
-      <li>42列表</li>
-      <li>43列表</li>
-      <li>44列表</li>
-      <li>45列表</li>
-      <li>46列表</li>
-      <li>47列表</li>
-      <li>48列表</li>
-      <li>49列表</li>
-      <li>50列表</li>
-    </ul>
+    <Scroll class="content" ref="scroll">
+      <!-- 轮播图 -->
+      <Swipe :banners="banners"></Swipe>
+      <!-- 推荐栏 -->
+      <RecommendView :recommends="recommends"></RecommendView>
+      <!-- 周推栏 -->
+      <FeatureView></FeatureView>
+      <!-- 切换栏 -->
+      <TapControl class="tab-control" :titles="titles" @tabClick="tabClick"></TapControl>
+      <!-- 商品显示栏 -->
+      <GoodList :goods="showGoods"></GoodList>
+    </Scroll>
+    <BackToTop @click.native="backClick"></BackToTop>
   </div>
 </template>
 <script>
   // 公共组件
   import NavBar from 'components/common/navbar/NavBar';
   import TapControl from 'components/content/tapControl/TapControl';
+  import Scroll from 'components/common/scroll/Scroll';
   
   // 业务组件
   import Swipe from 'views/home/childComps/Swipe';
   import RecommendView from 'views/home/childComps/RecommendView';
   import FeatureView from 'views/home/childComps/FeatureView';
   import GoodList from '@/components/content/goods/GoodList';
+  import BackToTop from '@/components/content/backTop/BackToTop';
 
   // 数据接口
   import {getHomeMultidate, getHomeGoods} from '@/network/home.js';
+import BScroll from 'better-scroll';
 
   export default {
     name : 'home',
@@ -87,7 +46,9 @@
       RecommendView,
       FeatureView,
       TapControl,
-      GoodList
+      GoodList,
+      Scroll,
+      BackToTop
     },
     data() {
       return {
@@ -109,6 +70,11 @@
       this.getHomeGoods('new')
       this.getHomeGoods('sell')
       
+    },
+    updated() {
+      this.$nextTick(() => {
+        this.$refs.scroll.scroll.refresh()
+      })
     },
     computed: {
       showGoods() {
@@ -140,13 +106,18 @@
           this.goods[type].page = page
         })
       },
-    }
+      backClick() {
+        // 获取Scroll里面的scroll对象，调用scrollTo方法返回顶部
+        this.$refs.scroll.scrollTo()
+      }
+    },
   }
 </script>
 
 <style scoped>
   #home{
-    padding: 44px 0px 49px 0px;
+    height: 100vh;
+    position: relative;
   }
 
   .home-nav {
@@ -162,7 +133,11 @@
   
   .tab-control {
     z-index: 9;
-    position: sticky;
-    top: 44px;
+  }
+
+  .content {
+    margin-top: 44px;
+    height: calc(100vh - 93px);
+    overflow: hidden;
   }
 </style>
