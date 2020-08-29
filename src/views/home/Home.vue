@@ -1,12 +1,16 @@
 <template>
-  <div id="home">
+  <!-- 
+    @mousewheel.prevent
+    禁用鼠标滚轮
+  -->
+  <div id="home" @mousewheel.prevent>
     <!-- 导航栏 -->
     <NavBar class="home-nav">
       <template v-slot:center>
         <div>购物街</div>
       </template>
     </NavBar>
-    <Scroll class="content" ref="scroll">
+    <Scroll class="content" ref="scroll" :probeType="3" @scroll="scrolling">
       <!-- 轮播图 -->
       <Swipe :banners="banners"></Swipe>
       <!-- 推荐栏 -->
@@ -18,7 +22,7 @@
       <!-- 商品显示栏 -->
       <GoodList :goods="showGoods"></GoodList>
     </Scroll>
-    <BackToTop @click.native="backClick"></BackToTop>
+    <BackToTop v-show="isShow" class="back-to-top" @click.native="backClick"></BackToTop>
   </div>
 </template>
 <script>
@@ -36,7 +40,7 @@
 
   // 数据接口
   import {getHomeMultidate, getHomeGoods} from '@/network/home.js';
-import BScroll from 'better-scroll';
+  import BScroll from 'better-scroll';
 
   export default {
     name : 'home',
@@ -60,7 +64,8 @@ import BScroll from 'better-scroll';
           'new' : {page: 0, list: []},
           'sell' : {page: 0, list: []},
         },
-        currentType: 'pop'
+        currentType: 'pop',
+        isShow: false
       }
     },
     created() {
@@ -79,7 +84,7 @@ import BScroll from 'better-scroll';
     computed: {
       showGoods() {
         return this.goods[this.currentType].list
-      }
+      },
     },
     methods: {
       /*  
@@ -89,7 +94,13 @@ import BScroll from 'better-scroll';
         // 通过keys方法获取对应index的键，将其放入currentType
         this.currentType = Object.keys(this.goods)[index]
       },
-
+      backClick() {
+        // 获取Scroll里面的scroll对象，调用scrollTo方法返回顶部
+        this.$refs.scroll.scrollTo()
+      },
+      scrolling(position) {
+        this.isShow = (-position.y) > 1000
+      },
       /* 
        * 网络相关请求
        */
@@ -106,17 +117,13 @@ import BScroll from 'better-scroll';
           this.goods[type].page = page
         })
       },
-      backClick() {
-        // 获取Scroll里面的scroll对象，调用scrollTo方法返回顶部
-        this.$refs.scroll.scrollTo()
-      }
     },
   }
 </script>
 
 <style scoped>
   #home{
-    height: 100vh;
+    height: calc(100vh - 93px);
     position: relative;
   }
 
