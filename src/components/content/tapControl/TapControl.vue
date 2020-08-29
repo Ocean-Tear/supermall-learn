@@ -21,12 +21,13 @@
     },
     data() {
       return {
-        currentIndex: 1
+        currentIndex: 0
       }
     },
     methods: {
       changeIndex(index) {
         this.currentIndex = index
+        this.$emit('tabClick', index)
       }
     }
   }

@@ -9,8 +9,8 @@
     <Swipe :banners="banners"></Swipe>
     <RecommendView :recommends="recommends"></RecommendView>
     <FeatureView></FeatureView>
-    <TapControl class="tab-control" :titles="titles"></TapControl>
-    <GoodList :goods="goods['pop'].list"></GoodList>
+    <TapControl class="tab-control" :titles="titles" @tabClick="tabClick"></TapControl>
+    <GoodList :goods="showGoods"></GoodList>
     <ul>
       <li>1列表</li>
       <li>2列表</li>
@@ -98,7 +98,8 @@
           'pop' : {page: 0, list: []},
           'new' : {page: 0, list: []},
           'sell' : {page: 0, list: []},
-        }
+        },
+        currentType: 'pop'
       }
     },
     created() {
@@ -109,7 +110,23 @@
       this.getHomeGoods('sell')
       
     },
+    computed: {
+      showGoods() {
+        return this.goods[this.currentType].list
+      }
+    },
     methods: {
+      /*  
+       * 事件监听相关   
+       */
+      tabClick(index) {
+        // 通过keys方法获取对应index的键，将其放入currentType
+        this.currentType = Object.keys(this.goods)[index]
+      },
+
+      /* 
+       * 网络相关请求
+       */
       getHomeMultidate() {
         getHomeMultidate().then(res => {
           this.banners = res.data.banner.list
@@ -122,7 +139,7 @@
           this.goods[type].list.push(...res.data.list)
           this.goods[type].page = page
         })
-      }
+      },
     }
   }
 </script>
