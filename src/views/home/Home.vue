@@ -10,7 +10,11 @@
         <div>购物街</div>
       </template>
     </NavBar>
-    <Scroll class="content" ref="scroll" :probeType="3" @scroll="scrolling">
+    <!-- 使用滚动插件包裹内容 -->
+    <Scroll class="content" ref="scroll" 
+      :probeType="3" @scroll="scrolling"
+      :pullUpLoad="true" @pullingUp="LoadMore"
+    >
       <!-- 轮播图 -->
       <Swipe :banners="banners"></Swipe>
       <!-- 推荐栏 -->
@@ -101,6 +105,9 @@
       scrolling(position) {
         this.isShow = (-position.y) > 1000
       },
+      LoadMore() {
+        this.getHomeGoods(this.currentType)
+      },
       /* 
        * 网络相关请求
        */
@@ -115,6 +122,8 @@
         getHomeGoods(type, page).then(res => {
           this.goods[type].list.push(...res.data.list)
           this.goods[type].page = page
+
+          this.$refs.scroll.finishPullUp()
         })
       },
     },

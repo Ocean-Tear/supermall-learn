@@ -20,24 +20,37 @@
       probeType: {
         type: Number,
         default: 0
+      },
+      pullUpLoad: {
+        type: Boolean,
+        default: false
       }
     },
     mounted() {
       this.scroll = new BScroll(this.$refs.warapper, {
-        pullUpLoad: true,
         click: true,
-        probeType: this.probeType
+        probeType: this.probeType,
+        pullUpLoad: this.pullUpLoad
       })
 
       this.scroll.on('scroll', position => {
         this.$emit('scroll', position)
       })
+
+      if(this.pullUpLoad) {
+        this.scroll.on('pullingUp', position => {
+          this.$emit('pullingUp', position)
+        })
+      }
     },
     methods: {
       scrollTo(x = 0, y = 0, time = 800) {
         this.scroll.scrollTo(x, y, time)
       },
-    }
+      finishPullUp() {
+        this.scroll.finishPullUp()
+      }
+    },
   }
 </script>
 
