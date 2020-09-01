@@ -33,22 +33,27 @@
         pullUpLoad: this.pullUpLoad
       })
 
-      this.scroll.on('scroll', position => {
-        this.$emit('scroll', position)
-      })
+      if (this.probeType === 2 || this.probeType === 3) {
+        this.scroll.on('scroll', position => {
+          this.$emit('scroll', position)
+        })
+      }
 
       if(this.pullUpLoad) {
-        this.scroll.on('pullingUp', position => {
-          this.$emit('pullingUp', position)
+        this.scroll.on('pullingUp', () => {
+          this.$emit('pullingUp')
         })
       }
     },
     methods: {
       scrollTo(x = 0, y = 0, time = 800) {
-        this.scroll.scrollTo(x, y, time)
+        this.scroll && this.scroll.scrollTo(x, y, time)
       },
       finishPullUp() {
-        this.scroll.finishPullUp()
+        this.scroll && this.scroll.finishPullUp()
+      },
+      refresh() {
+        this.scroll && this.scroll.refresh()
       }
     },
   }

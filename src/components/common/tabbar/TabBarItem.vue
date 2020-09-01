@@ -1,7 +1,5 @@
 <template>
   <div class="tab-bar-item" @click="btnClick">
-    <!-- <img src="../../assets/img/tab-bar/home.svg" alt="">
-    <div>首页</div> -->
     <div v-if="!isActive"><slot name="item-icon"></slot></div>
     <div v-else><slot name="item-icon-active"></slot></div>
     <div :style="activeStyle"><slot name="item-text"></slot></div>

@@ -42,9 +42,10 @@
   import GoodList from '@/components/content/goods/GoodList';
   import BackToTop from '@/components/content/backTop/BackToTop';
 
-  // 数据接口
+  // 接口
   import {getHomeMultidate, getHomeGoods} from '@/network/home.js';
   import BScroll from 'better-scroll';
+  import {debounce} from 'common/util';
 
   export default {
     name : 'home',
@@ -78,12 +79,15 @@
       this.getHomeGoods('pop')
       this.getHomeGoods('new')
       this.getHomeGoods('sell')
-      
+
     },
-    updated() {
-      this.$nextTick(() => {
-        this.$refs.scroll.scroll.refresh()
+    mounted() {
+      const refresh = debounce(this.$refs.scroll.refresh, 200)
+      // 监听item中图片加载完成
+      this.$bus.$on('itemImageLoad', () => {
+        refresh()
       })
+
     },
     computed: {
       showGoods() {
