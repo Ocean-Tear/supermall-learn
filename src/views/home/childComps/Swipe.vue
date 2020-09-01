@@ -3,7 +3,7 @@
   :height="195">
     <van-swipe-item v-for="item in banners" :key="item.title">
       <a :href="item.link">
-        <img v-lazy="item.image">
+        <img v-lazy="item.image" @load="swipeLoad">
       </a>
     </van-swipe-item>
   </van-swipe>
@@ -20,6 +20,11 @@
         }
       }
     },
+    methods: {
+      swipeLoad() {
+        this.$emit('swipeLoad')
+      }
+    }
   }
 </script>
 

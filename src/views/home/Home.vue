@@ -10,19 +10,26 @@
         <div>购物街</div>
       </template>
     </NavBar>
+      <!-- 切换栏-假显示 -->
+      <TapControl class="tab-control tabfixed" ref="tabControlview" 
+                  :titles="titles" @tabClick="tabClick"
+                  v-show="isTabFixed"
+      ></TapControl>
     <!-- 使用滚动插件包裹内容 -->
     <Scroll class="content" ref="scroll" 
       :probeType="3" @scroll="scrolling"
       :pullUpLoad="true" @pullingUp="LoadMore"
     >
       <!-- 轮播图 -->
-      <Swipe :banners="banners"></Swipe>
+      <Swipe :banners="banners" @swipeLoad="swipeLoad"></Swipe>
       <!-- 推荐栏 -->
       <RecommendView :recommends="recommends"></RecommendView>
       <!-- 周推栏 -->
       <FeatureView></FeatureView>
       <!-- 切换栏 -->
-      <TapControl class="tab-control" :titles="titles" @tabClick="tabClick"></TapControl>
+      <TapControl class="tab-control" ref="tabControl" 
+                  :titles="titles" @tabClick="tabClick"
+      ></TapControl>
       <!-- 商品显示栏 -->
       <GoodList :goods="showGoods"></GoodList>
     </Scroll>
@@ -70,7 +77,9 @@
           'sell' : {page: 0, list: []},
         },
         currentType: 'pop',
-        isShow: false
+        isShow: false,
+        tabOffsetTop : 0,
+        isTabFixed : false
       }
     },
     created() {
@@ -99,6 +108,8 @@
        * 事件监听相关   
        */
       tabClick(index) {
+        this.$refs.tabControl.currentIndex = index
+        this.$refs.tabControlview.currentIndex = index
         // 通过keys方法获取对应index的键，将其放入currentType
         this.currentType = Object.keys(this.goods)[index]
       },
@@ -107,10 +118,17 @@
         this.$refs.scroll.scrollTo()
       },
       scrolling(position) {
-        this.isShow = (-position.y) > 1000
+        // 判断回到顶部是否显示
+        this.isShow = (-position.y) >= 1000
+
+        // 决定tabcontrol是否吸顶
+        this.isTabFixed = (-position.y) >= this.tabOffsetTop
       },
       LoadMore() {
         this.getHomeGoods(this.currentType)
+      },
+      swipeLoad() {
+        this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop
       },
       /* 
        * 网络相关请求
@@ -148,11 +166,19 @@
     top: 0;
     left: 0;
     right: 0;
+
     z-index: 9;
   }
   
   .tab-control {
     z-index: 9;
+  }
+  
+  .tabfixed {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 44px;
   }
 
   .content {
