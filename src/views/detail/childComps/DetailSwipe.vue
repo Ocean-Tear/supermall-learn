@@ -46,13 +46,8 @@
   img {
     width: 100%;
   }
-
-  .my-swipe {
-    height: 340px;
-  }
-
+  
   .swipe-item {
-    height: 340px;
     overflow: hidden;
   }
 
