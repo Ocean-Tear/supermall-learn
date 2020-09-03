@@ -5,6 +5,8 @@
       <DetailSwipe :TopImages="topImages"></DetailSwipe>
       <DetailBaseInfo :goods="goods"></DetailBaseInfo>
       <DetailShopInfo :shop="Shop"></DetailShopInfo>
+      <DetailGoodsInfo :detailInfo="detailInfo" @imageLoad="imageLoad"></DetailGoodsInfo>
+      <DetailParamInfo :paramInfo="paramInfo"></DetailParamInfo>
     </Scroll>
   </div> 
 </template>
@@ -15,8 +17,12 @@
   import DetailSwipe from '@/views/detail/childComps/DetailSwipe';
   import DetailBaseInfo from '@/views/detail/childComps/DetailBaseInfo';
   import DetailShopInfo from '@/views/detail/childComps/DetailShopInfo';
+  import DetailGoodsInfo from '@/views/detail/childComps/DetailGoodsInfo';
+  import DetailParamInfo from '@/views/detail/childComps/DetailParamInfo';
 
-  import {getDetail, Goods, Shop} from '@/network/detail';
+  import {getDetail, Goods, Shop, GoodsParam} from '@/network/detail';
+  
+  import {debounce} from 'common/util';
 
   export default {
     name : 'Detail',
@@ -25,7 +31,10 @@
         iid: null,
         topImages : [],
         goods: {},
-        Shop: {}
+        Shop: {},
+        detailInfo: {},
+        refresh: null,
+        paramInfo: {},
       }
     },
     components: {
@@ -33,7 +42,9 @@
       DetailSwipe,
       DetailBaseInfo,
       DetailShopInfo,
-      Scroll
+      Scroll,
+      DetailGoodsInfo,
+      DetailParamInfo
     },
     created() {
       this.iid = this.$route.params.iid
@@ -49,12 +60,21 @@
 
         // 获取卖家信息
         this.Shop = new Shop(data.shopInfo)
+
+        // 获取商品详情数据
+        this.detailInfo = data.detailInfo
+
+        // 获取商品参数
+        this.paramInfo = new GoodsParam(data.itemParams.info, data.itemParams.rule)
       })
     },
     mounted() {
-      setTimeout(() => {
-        this.$refs.bscroll.refresh()
-      }, 500);
+      this.refresh = debounce(this.$refs.bscroll.refresh,200)
+    },
+    methods: {
+      imageLoad() {
+        this.refresh()
+      }
     }
   }
 </script>
